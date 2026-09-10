@@ -138,7 +138,7 @@ Initial candidate operations remain those established in RFC 0001:
 - `testing.minimize-reproducer`;
 - `testing.propose-regression`.
 
-The capability namespace identifies testing semantics, not the host implementation or model backend.
+The capability namespace identifies testing semantics, not the host implementation or model backend. Names such as `openai.generate-tests`, `dubnium.fuzz`, or `llama.execute-plan` are therefore inappropriate as stable Testule capability identities.
 
 ## Semantic operations versus governed effects
 
@@ -146,11 +146,24 @@ Testule does not define a universal privileged-effect taxonomy.
 
 A host should distinguish semantic/domain operations from consequential effects according to the concrete authority and side effects involved.
 
-Typical semantic operations include plan validation and gap inspection, testability review, generation as proposals, failure triage, reproducer minimization, and regression proposal generation.
+Typical semantic operations include:
+
+- plan validation and gap inspection;
+- testability review;
+- generation of tests, properties, data, or fuzz harnesses as proposals;
+- failure triage;
+- reproducer minimization;
+- regression proposal generation.
 
 Execution-oriented operations such as `testing.execute-plan` and `testing.execute-fuzz` require explicit sandbox/resource policy. They are not automatically privileged effects merely because they execute code; classification depends on what authority the host grants and what state can be affected.
 
-Consequential follow-on operations may include applying generated changes to protected state, pushing/merging/releasing/deploying, accessing protected credentials or systems, provisioning privileged environments, or changing policy/authorization state.
+Consequential follow-on operations may include:
+
+- applying generated changes to protected or canonical source state;
+- pushing, opening/merging a PR, releasing, or deploying;
+- accessing protected credentials, production systems, or restricted network targets;
+- provisioning or mutating privileged environments;
+- changing organization policy or authorization state.
 
 Those operations should cross the host's effect/governance boundary rather than being hidden inside a Testule semantic capability.
 
@@ -170,9 +183,13 @@ proposed
 
 No trust transition automatically grants mutation authority.
 
-Before any mutation or promotion consumes a proposal, the mutation boundary must compare the current subject identity/revision or equivalent content digest with the revision bound into the `CapabilityResult`. A mismatch must fail closed: the proposal is rejected as stale or explicitly revalidated/regenerated against the new subject and produces new attributable evidence.
+A generation capability may emit a proposed patch, file set, fuzz corpus, fixture, property, or harness. The result should preserve provenance and exact subject revision so stale proposals cannot silently apply to a different source state.
+
+Before any mutation or promotion consumes a proposal, the mutation boundary must compare the current subject identity/revision or equivalent content digest with the revision bound into the `CapabilityResult`. A mismatch must fail closed: the proposal is rejected as stale or explicitly revalidated/regenerated against the new subject and produces new attributable evidence. A caller cannot rebind an old result to newer source state by assertion.
 
 ## Host-neutral provider seam
+
+The first integration seam should remain deliberately small.
 
 A host needs to be able to:
 
@@ -199,7 +216,7 @@ opencode / Codex / Supervisor / CI
        -> CapabilityResult + Evidence + proposed artifacts
 ```
 
-Where mutable generated-test execution is needed, Dubnium should compose with its bounded reversible agent-run execution boundary rather than Testule inventing another general worktree/sandbox lifecycle.
+Where mutable generated-test execution is needed, Dubnium should compose with its bounded reversible agent-run execution boundary (`ryjen/dubnium#413`) rather than Testule inventing another general worktree/sandbox lifecycle.
 
 Where a consequential effect is required:
 
@@ -211,13 +228,35 @@ Testule proposal/result
   -> provider / narrow worker
 ```
 
-### Ownership
+This preserves Dubnium's invariant that a semantic capability does not imply governed-effect authority.
 
-Dubnium owns caller/transport/run identity, model routing/orchestration, execution sandbox and host resource enforcement, exact source binding, bounded reversible runs, runtime/governance evidence links, and classification/routing of consequential follow-on effects.
+### Dubnium owns
 
-Testule owns testing plans/testability/scenario/data/environment semantics, testing capability semantics, native testing adapters, testing-specific validation/replay/minimization, normalized Testule Evidence, and generated testing artifacts/provenance.
+- caller/transport/run identity;
+- model selection and AI entrypoint routing;
+- Supervisor/specialist orchestration where used;
+- execution sandbox and host resource enforcement;
+- exact repository/source binding at the runtime boundary;
+- integration with bounded reversible runs;
+- links to runtime/governance evidence;
+- classification and routing of consequential follow-on effects.
 
-Anthesis / Capability Gateway own exact authorization for consequential governed effects when applicable.
+### Testule owns
+
+- testing plans, testability, scenarios, data, and environment semantics;
+- testing capability semantics;
+- native test/fuzz/static-analysis adapters;
+- testing-specific validation, replay, and minimization;
+- normalized Testule Evidence;
+- generated testing artifacts and their testing-domain provenance.
+
+### Anthesis / Capability Gateway own when applicable
+
+- exact authorization for consequential governed effects;
+- approvals, constraints, expiry, and governance evidence requirements;
+- governed-effect request identity, canonicalization, idempotency, and dispatch.
+
+Testule must not become a second governance authority, and Dubnium must not copy Testule's testing-domain model into its Supervisor or Capability Gateway.
 
 ## Security requirements
 
@@ -237,17 +276,47 @@ Anthesis / Capability Gateway own exact authorization for consequential governed
 
 This RFC does not require `CapabilityInvocation` or `CapabilityResult` to become ordinary `testule.dev/v1alpha1` authoring resources.
 
-The first machine-readable protocol should be explicitly versioned independently enough that host integrations can detect incompatible changes.
+The first machine-readable protocol should be explicitly versioned independently enough that host integrations can detect incompatible changes. The exact envelope/schema mechanism is deferred to #6/#10 implementation work.
 
-Compatibility-sensitive areas include capability identity and operation input semantics, terminal result/failure classifications, authority/resource fields, subject/revision binding, artifact trust states, and evidence linkage.
+The following are compatibility-sensitive and must be versioned deliberately:
+
+- capability identity and operation input semantics;
+- terminal result/failure classifications;
+- authority/resource requirement fields;
+- subject/revision binding semantics;
+- artifact trust-state semantics;
+- evidence linkage semantics.
 
 Host-specific identities, model names, service names, policy documents, or privileged-effect schemas must not leak into the stable Testule capability contract.
 
 ## Validation strategy
 
-Before a live AI or privileged integration, provide deterministic fixtures for read-only operations, caller identity spoofing rejection, requested authority wider than host/capability policy, denied resource access, unsupported mandatory resource limits, stale subject revision, stale proposal promotion, generated artifacts returned as proposals without canonical mutation, malformed/oversized result/evidence, explicit denied/unsupported/timeout/partial status, and evidence linkage that preserves ownership.
+Before a live AI or privileged integration, provide deterministic fixtures for:
+
+- a read-only operation such as `testing.validate-plan` or `testing.inspect-gaps`;
+- caller identity spoofing rejection;
+- requested authority wider than host/capability policy;
+- denied filesystem/network/process/secret/device access;
+- unsupported mandatory resource limit;
+- stale subject revision;
+- stale proposal promotion after subject revision changes, including reject and explicit revalidation paths;
+- generated artifact returned as proposal without canonical mutation;
+- malformed/oversized result/evidence;
+- explicit denied/unsupported/timeout/partial status;
+- evidence linkage without collapsing host/runtime/governance ownership.
 
 A Dubnium reference fixture must require no model, GPU, external network, real Anthesis service, or privileged host mutation.
+
+## Implementation sequence
+
+1. Define the minimal versioned invocation/result envelopes in #6/#10.
+2. Implement deterministic contract fixtures and a fake host/provider seam.
+3. Land Evidence and native adapter prerequisites from #4/#5.
+4. Expose a stable local machine-readable Testule invocation interface.
+5. Integrate one read-only Testule operation in Dubnium #677.
+6. Add one AI-assisted proposal operation without canonical mutation.
+7. Compose bounded generated-test/fuzz execution with the host runtime boundary.
+8. Add a separate governed-effect bridge only after a concrete consequential mutation requires it.
 
 ## Decision summary
 
