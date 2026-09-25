@@ -47,6 +47,31 @@ Release validation occurs against the constructed artifact, not only the source 
 - development-only tests and fixtures not needed at runtime;
 - host-specific configuration or private paths.
 
+## Promotion verification
+
+Before any canonical payload is promoted into this public repository, verify the
+already-built release bundle locally:
+
+```sh
+python3 scripts/verify-canonical-release.py \
+  /path/to/canonical-release-payload \
+  <version> \
+  <canonical-40-char-commit>
+```
+
+The verifier is intentionally **artifact-only**. It never fetches the private
+canonical repository. It requires exactly the canonical runtime archive,
+public-contract archive, `SHA256SUMS`, `provenance.json`, and
+`buildinfo.txt`; rejects unexpected archive members, links, traversal, and
+extra payload files; verifies both archive digests; validates the exact
+provenance identity; checks the projected contract manifest; and requires the
+runtime and public-contract copies of `testule(1)` to be byte-identical.
+
+For the first release, the intended version is `0.1.0-alpha.1`. Do not record
+an artifact hash or public package derivation until the canonical
+`v0.1.0-alpha.1` workflow has completed successfully and the verifier has
+accepted its actual payload.
+
 ## Nix consumption
 
 The public Nix flake is added with the first projected immutable binary release. It must consume public release artifacts and verify their hashes; it must not build from or fetch the private canonical source repository.
