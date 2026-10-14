@@ -31,7 +31,7 @@ private canonical release.
 ## Operator commands
 
 Promote the exact verified canonical payload with
-`scripts/promote-public-release.sh`, then prove the public/cache-miss boundary
+`scripts/promote-public-release.sh`. Promotion stays draft until all five uploaded asset digests and the direct public tag target are verified. Then prove the public/cache-miss boundary
 with `scripts/verify-public-release.sh`. Do not merge the package PR merely
 because release creation succeeded; public download plus `nix flake check`
 must both pass.

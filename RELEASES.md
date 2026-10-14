@@ -101,7 +101,7 @@ scripts/promote-public-release.sh \
   <exact-public-target-commit>
 ```
 
-The helper re-runs the artifact-only verifier, byte-compares the checked-in checksum/provenance/build-info records, requires an exact existing public target commit, refuses to overwrite an existing release, and uploads exactly the five reviewed files.
+The helper re-runs the artifact-only verifier, byte-compares the checked-in checksum/provenance/build-info records, requires an exact existing public target commit, refuses to overwrite existing release state, creates a **draft prerelease**, verifies the exact five GitHub-reported asset SHA-256 digests plus the direct tag target, and only then publishes it.
 
 Then qualify the public boundary without canonical-private credentials:
 
