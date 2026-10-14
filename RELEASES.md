@@ -90,3 +90,23 @@ Consumers commit `flake.lock` and use the exported package/app surface. Cache-mi
 Repository visibility does not protect any source that was previously public. Historical Testule implementation source is treated as disclosed. The private-canonical topology is a forward-looking exposure boundary, not retroactive secrecy.
 
 Signing/attestation keys or credentials are never copied into this repository. Prefer managed/keyless provenance when the release pipeline adds signing.
+
+## Public promotion commands
+
+The remaining release mutation is intentionally explicit and fail closed. From a checkout of the exact reviewed public-package commit, with the verified canonical five-file payload available locally:
+
+```sh
+scripts/promote-public-release.sh \
+  /path/to/testule-release-v0.1.0-alpha.2 \
+  <exact-public-target-commit>
+```
+
+The helper re-runs the artifact-only verifier, byte-compares the checked-in checksum/provenance/build-info records, requires an exact existing public target commit, refuses to overwrite an existing release, and uploads exactly the five reviewed files.
+
+Then qualify the public boundary without canonical-private credentials:
+
+```sh
+scripts/verify-public-release.sh
+```
+
+Qualification downloads all five assets from the public community release URL, re-runs the canonical payload verifier, compares checked-in metadata, rechecks archive SHA-256 values, and runs `nix flake check`. A machine without Nix may verify the public payload but cannot complete package acceptance.

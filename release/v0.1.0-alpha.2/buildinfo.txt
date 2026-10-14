@@ -1,0 +1,11 @@
+result/bin/testule: go1.26.5
+	path	github.com/hackelia-micrantha/testule/cmd/testule
+	mod	github.com/hackelia-micrantha/testule	(devel)	
+	dep	go.yaml.in/yaml/v3	v3.0.4	
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	-trimpath=true
+	build	CGO_ENABLED=1
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
