@@ -70,8 +70,9 @@ runtime and public-contract copies of `testule(1)` to be byte-identical.
 The first successful canonical payload is `0.1.0-alpha.2`, built from canonical
 commit `879e6f7a0a74ece2c12fcc4a7b16d05387b832ea`. Its runtime SHA-256 is
 `a5cabc19d233e84fbd880cdcdbcdc682f51141c31e39f0677ac1a144cdf02cec`.
-The public package may use this hash only after those exact bytes are uploaded
-to this repository's immutable `v0.1.0-alpha.2` release surface.
+Public artifact publication and binary-package qualification are separate:
+first publish these exact bytes on the community release surface, then qualify
+the fixed-hash package against that public URL.
 
 ## Nix consumption
 
@@ -91,22 +92,31 @@ Repository visibility does not protect any source that was previously public. Hi
 
 Signing/attestation keys or credentials are never copied into this repository. Prefer managed/keyless provenance when the release pipeline adds signing.
 
-## Public promotion commands
 
-The remaining release mutation is intentionally explicit and fail closed. From a checkout of the exact reviewed public-package commit, with the verified canonical five-file payload available locally:
+## First artifact projection: 0.1.0-alpha.2
+
+The checked-in records under `release/v0.1.0-alpha.2/` are copied byte-for-byte
+from the verified canonical payload. `scripts/promote-public-release.sh` is the
+only reviewed publication helper for this projection; it keeps the GitHub
+release draft until the exact five uploaded digests are verified.
+
+After publication, `scripts/verify-public-release-assets.sh` proves that the
+same payload is retrievable without canonical-private credentials. The
+binary-oriented Nix package is qualified separately in #4.
+
+
+## Binary package qualification
+
+The package layer is intentionally downstream of artifact publication. The
+binary flake fetches only the community release URL and pins the canonical
+runtime SHA-256 as a Nix SRI hash. It never fetches or builds the private
+canonical implementation.
+
+After `v0.1.0-alpha.2` is publicly available, run:
 
 ```sh
-scripts/promote-public-release.sh \
-  /path/to/testule-release-v0.1.0-alpha.2 \
-  <exact-public-target-commit>
+scripts/verify-public-package.sh
 ```
 
-The helper re-runs the artifact-only verifier, byte-compares the checked-in checksum/provenance/build-info records, requires an exact existing public target commit, refuses to overwrite existing release state, creates a **draft prerelease**, verifies the exact five GitHub-reported asset SHA-256 digests plus the direct tag target, and only then publishes it.
-
-Then qualify the public boundary without canonical-private credentials:
-
-```sh
-scripts/verify-public-release.sh
-```
-
-Qualification downloads all five assets from the public community release URL, re-runs the canonical payload verifier, compares checked-in metadata, rechecks archive SHA-256 values, and runs `nix flake check`. A machine without Nix may verify the public payload but cannot complete package acceptance.
+That first re-verifies all five public release assets, then runs `nix flake
+check`, an explicit package build, and `nix run . -- --version`.

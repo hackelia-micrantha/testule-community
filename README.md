@@ -37,7 +37,7 @@ The public contract is independently usable: consumers and third-party implement
 
 Testule is incubating. The current public interface is `v1alpha1`; incompatible contract changes remain possible and must cross an explicit version boundary when required.
 
-Canonical Testule `0.1.0-alpha.2` is release-proven and the binary-only public package definition is prepared. The public runtime release asset is still being promoted; until the `v0.1.0-alpha.2` community release exists, the flake is intentionally blocked rather than falling back to private canonical source.
+Canonical Testule `0.1.0-alpha.2` is release-proven and its public artifact projection is prepared. The public binary Nix package remains a separate qualification step after the immutable community release assets are live.
 
 ## Security boundary
 
@@ -48,3 +48,11 @@ Package installation grants executable availability only. Filesystem, process, n
 ## License
 
 Public Testule specification and distribution material is published under Apache License 2.0 unless a file states otherwise.
+
+
+## Binary package candidate
+
+The fixed-hash binary Nix package for `0.1.0-alpha.2` is prepared in #4 and
+intentionally remains unmerged until the immutable community release assets are
+live and `scripts/verify-public-package.sh` passes from the public URL without
+canonical-private credentials.

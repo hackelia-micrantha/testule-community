@@ -1,4 +1,4 @@
-# Testule 0.1.0-alpha.2 public projection
+# Testule 0.1.0-alpha.2 public artifact projection
 
 Canonical implementation release:
 
@@ -11,27 +11,29 @@ Canonical implementation release:
 - public-contract SHA-256: `beeff1932d9b7725c16ee7e6dcf3d1d9c7b4dad1b9300009b9b2ed3f0603c626`
 - projection-manifest SHA-256: `9c8e0e08941e40b2dc8604841e38f062fc6b4272782fd8e6dc7a81a362f957cc`
 
-The canonical payload was independently retrieved through the authenticated
-release workflow artifact and verified against `SHA256SUMS`, provenance,
+The canonical payload was independently retrieved from the authenticated
+canonical workflow artifact and verified against `SHA256SUMS`, provenance,
 archive structure, ELF runtime identity, man-page version identity, and the
 projected contract manifest.
 
-## Public promotion gate
+This commit is the public **artifact-distribution identity**. The binary Nix
+package is qualified separately after these exact files are available from the
+public release URL.
 
-The public release is not complete until the exact canonical runtime archive,
-public-contract archive, `SHA256SUMS`, `provenance.json`, and
-`buildinfo.txt` are uploaded to this repository's immutable
-`v0.1.0-alpha.2` release surface.
+## Promotion
 
-The Nix flake deliberately fetches only that future public release URL. It does
-not fetch or build canonical private source, and it does not point at the
-private canonical release.
+Run:
 
+```sh
+scripts/promote-public-release.sh \
+  /path/to/testule-release-v0.1.0-alpha.2 \
+  <this-merged-main-commit>
+```
 
-## Operator commands
+The helper creates/verifies the exact lightweight `v0.1.0-alpha.2` tag,
+uploads exactly five assets to a draft prerelease, checks all GitHub-reported
+SHA-256 digests while the release is still draft, and only then publishes it.
 
-Promote the exact verified canonical payload with
-`scripts/promote-public-release.sh`. Promotion stays draft until all five uploaded asset digests and the direct public tag target are verified. Then prove the public/cache-miss boundary
-with `scripts/verify-public-release.sh`. Do not merge the package PR merely
-because release creation succeeded; public download plus `nix flake check`
-must both pass.
+After publication run `scripts/verify-public-release-assets.sh` from this
+commit. Package/cache-miss Nix qualification remains a separate downstream
+gate in #4.
