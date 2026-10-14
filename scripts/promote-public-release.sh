@@ -65,9 +65,32 @@ if gh release view "$tag" --repo "$repo" >/dev/null 2>&1; then
   exit 68
 fi
 
+if ref_json=$(gh api "repos/$repo/git/ref/tags/$tag" 2>/dev/null); then
+  ref_type=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["type"])' <<<"$ref_json")
+  ref_sha=$(python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])' <<<"$ref_json")
+  [[ "$ref_type" == "commit" && "$ref_sha" == "$target_commit" ]] || {
+    echo "existing release tag does not directly identify expected public commit" >&2
+    exit 70
+  }
+else
+  gh api \
+    --method POST \
+    "repos/$repo/git/refs" \
+    -f "ref=refs/tags/$tag" \
+    -f "sha=$target_commit" \
+    >/dev/null
+fi
+
+ref_type=$(gh api "repos/$repo/git/ref/tags/$tag" --jq .object.type)
+ref_sha=$(gh api "repos/$repo/git/ref/tags/$tag" --jq .object.sha)
+[[ "$ref_type" == "commit" && "$ref_sha" == "$target_commit" ]] || {
+  echo "release tag does not point directly to expected public commit" >&2
+  exit 70
+}
+
 gh release create "$tag" \
   --repo "$repo" \
-  --target "$target_commit" \
+  --verify-tag \
   --title "Testule $version" \
   --notes-file "$release_dir/README.md" \
   --draft \
@@ -116,13 +139,6 @@ actual = {
 if actual != expected:
     raise SystemExit(f"draft release asset digest set mismatch: {actual!r}")
 PY
-
-ref_type=$(gh api "repos/$repo/git/ref/tags/$tag" --jq .object.type)
-ref_sha=$(gh api "repos/$repo/git/ref/tags/$tag" --jq .object.sha)
-[[ "$ref_type" == "commit" && "$ref_sha" == "$target_commit" ]] || {
-  echo "release tag does not point directly to expected public commit" >&2
-  exit 70
-}
 
 gh release edit "$tag" \
   --repo "$repo" \
