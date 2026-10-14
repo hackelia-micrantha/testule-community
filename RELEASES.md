@@ -67,10 +67,12 @@ extra payload files; verifies both archive digests; validates the exact
 provenance identity; checks the projected contract manifest; and requires the
 runtime and public-contract copies of `testule(1)` to be byte-identical.
 
-For the first release, the intended version is `0.1.0-alpha.1`. Do not record
-an artifact hash or public package derivation until the canonical
-`v0.1.0-alpha.1` workflow has completed successfully and the verifier has
-accepted its actual payload.
+The first successful canonical payload is `0.1.0-alpha.2`, built from canonical
+commit `879e6f7a0a74ece2c12fcc4a7b16d05387b832ea`. Its runtime SHA-256 is
+`a5cabc19d233e84fbd880cdcdbcdc682f51141c31e39f0677ac1a144cdf02cec`.
+Public artifact publication and binary-package qualification are separate:
+first publish these exact bytes on the community release surface, then qualify
+the fixed-hash package against that public URL.
 
 ## Nix consumption
 
@@ -89,3 +91,15 @@ Consumers commit `flake.lock` and use the exported package/app surface. Cache-mi
 Repository visibility does not protect any source that was previously public. Historical Testule implementation source is treated as disclosed. The private-canonical topology is a forward-looking exposure boundary, not retroactive secrecy.
 
 Signing/attestation keys or credentials are never copied into this repository. Prefer managed/keyless provenance when the release pipeline adds signing.
+
+
+## First artifact projection: 0.1.0-alpha.2
+
+The checked-in records under `release/v0.1.0-alpha.2/` are copied byte-for-byte
+from the verified canonical payload. `scripts/promote-public-release.sh` is the
+only reviewed publication helper for this projection; it keeps the GitHub
+release draft until the exact five uploaded digests are verified.
+
+After publication, `scripts/verify-public-release-assets.sh` proves that the
+same payload is retrievable without canonical-private credentials. The
+binary-oriented Nix package is qualified separately in #4.
