@@ -37,7 +37,7 @@ The public contract is independently usable: consumers and third-party implement
 
 Testule is incubating. The current public interface is `v1alpha1`; incompatible contract changes remain possible and must cross an explicit version boundary when required.
 
-There is not yet a published binary release. Until the first release projection lands, this repository is the public specification/distribution staging surface rather than a source-building package repository.
+Canonical Testule `0.1.0-alpha.2` is release-proven and the binary-only public package definition is prepared. The public runtime release asset is still being promoted; until the `v0.1.0-alpha.2` community release exists, the flake is intentionally blocked rather than falling back to private canonical source.
 
 ## Security boundary
 

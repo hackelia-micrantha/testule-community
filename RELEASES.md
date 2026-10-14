@@ -67,10 +67,11 @@ extra payload files; verifies both archive digests; validates the exact
 provenance identity; checks the projected contract manifest; and requires the
 runtime and public-contract copies of `testule(1)` to be byte-identical.
 
-For the first release, the intended version is `0.1.0-alpha.1`. Do not record
-an artifact hash or public package derivation until the canonical
-`v0.1.0-alpha.1` workflow has completed successfully and the verifier has
-accepted its actual payload.
+The first successful canonical payload is `0.1.0-alpha.2`, built from canonical
+commit `879e6f7a0a74ece2c12fcc4a7b16d05387b832ea`. Its runtime SHA-256 is
+`a5cabc19d233e84fbd880cdcdbcdc682f51141c31e39f0677ac1a144cdf02cec`.
+The public package may use this hash only after those exact bytes are uploaded
+to this repository's immutable `v0.1.0-alpha.2` release surface.
 
 ## Nix consumption
 

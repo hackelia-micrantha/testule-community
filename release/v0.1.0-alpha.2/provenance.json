@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "project": "testule",
+  "version": "0.1.0-alpha.2",
+  "tag": "v0.1.0-alpha.2",
+  "canonicalRepository": "hackelia-micrantha/testule",
+  "canonicalCommit": "879e6f7a0a74ece2c12fcc4a7b16d05387b832ea",
+  "publicDistributionRepository": "hackelia-micrantha/testule-community",
+  "platform": "linux-amd64",
+  "artifact": "testule-0.1.0-alpha.2-linux-amd64.tar.gz",
+  "sha256": "a5cabc19d233e84fbd880cdcdbcdc682f51141c31e39f0677ac1a144cdf02cec",
+  "publicContractsArtifact": "testule-0.1.0-alpha.2-public-contracts.tar.gz",
+  "publicContractsSha256": "beeff1932d9b7725c16ee7e6dcf3d1d9c7b4dad1b9300009b9b2ed3f0603c626",
+  "publicProjectionManifestSha256": "9c8e0e08941e40b2dc8604841e38f062fc6b4272782fd8e6dc7a81a362f957cc"
+}
