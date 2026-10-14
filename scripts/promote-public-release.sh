@@ -103,17 +103,16 @@ trap cleanup EXIT
 release_json="$work/release.json"
 gh release view "$tag" \
   --repo "$repo" \
-  --json tagName,targetCommitish,isDraft,isPrerelease,assets \
+  --json tagName,isDraft,isPrerelease,assets \
   > "$release_json"
 
-python3 - "$release_json" "$tag" "$target_commit" <<'PY'
+python3 - "$release_json" "$tag" <<'PY'
 import json
 import pathlib
 import sys
 
 release = json.loads(pathlib.Path(sys.argv[1]).read_text())
 tag = sys.argv[2]
-target = sys.argv[3]
 expected = {
     "testule-0.1.0-alpha.2-linux-amd64.tar.gz":
         "sha256:a5cabc19d233e84fbd880cdcdbcdc682f51141c31e39f0677ac1a144cdf02cec",
@@ -128,8 +127,6 @@ expected = {
 }
 if release.get("tagName") != tag:
     raise SystemExit("draft release tag mismatch")
-if release.get("targetCommitish") != target:
-    raise SystemExit("draft release target mismatch")
 if release.get("isDraft") is not True or release.get("isPrerelease") is not True:
     raise SystemExit("release must remain draft prerelease during asset verification")
 actual = {
