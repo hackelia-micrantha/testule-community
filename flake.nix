@@ -31,6 +31,12 @@
             dontBuild = true;
             strictDeps = true;
 
+            # Preserve the canonical already-built release surface exactly.
+            # In particular, stdenv's man-page fixup would otherwise replace
+            # share/man/man1/testule.1 with testule.1.gz and break the public
+            # package contract/check.
+            dontGzipMan = true;
+
             installPhase = ''
               runHook preInstall
               mkdir -p "$out"
