@@ -48,3 +48,11 @@ Package installation grants executable availability only. Filesystem, process, n
 ## License
 
 Public Testule specification and distribution material is published under Apache License 2.0 unless a file states otherwise.
+
+
+## Binary package candidate
+
+The fixed-hash binary Nix package for `0.1.0-alpha.2` is prepared in #4 and
+intentionally remains unmerged until the immutable community release assets are
+live and `scripts/verify-public-package.sh` passes from the public URL without
+canonical-private credentials.
