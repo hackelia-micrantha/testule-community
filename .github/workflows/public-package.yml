@@ -15,6 +15,9 @@ concurrency:
 
 jobs:
   verify:
+    # Public fork code must never acquire the Dubnium self-hosted runner.
+    # Same-repository PR branches and trusted main pushes are eligible.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: runner-testule-community
     timeout-minutes: 20
     steps:
