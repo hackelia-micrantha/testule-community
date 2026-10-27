@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   verify:
-    runs-on: runner-testule
+    runs-on: runner-testule-community
     timeout-minutes: 20
     steps:
       - name: Check out candidate
