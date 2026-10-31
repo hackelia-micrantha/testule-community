@@ -48,3 +48,13 @@ Package installation grants executable availability only. Filesystem, process, n
 ## License
 
 Public Testule specification and distribution material is published under Apache License 2.0 unless a file states otherwise.
+
+
+## Binary package candidate
+
+The canonical `v0.1.0-alpha.2` public release artifacts are live and verified.
+The fixed-hash binary Nix package is prepared in #4 and intentionally remains
+unmerged until `scripts/verify-public-package.sh` passes against the exact PR
+head on the repository-scoped JIT runner without canonical-private credentials.
+The Dubnium repository policy must be activated on the actual runner host before
+that job can qualify the package.

@@ -103,3 +103,20 @@ release draft until the exact five uploaded digests are verified.
 After publication, `scripts/verify-public-release-assets.sh` proves that the
 same payload is retrievable without canonical-private credentials. The
 binary-oriented Nix package is qualified separately in #4.
+
+
+## Binary package qualification
+
+The package layer is intentionally downstream of artifact publication. The
+binary flake fetches only the community release URL and pins the canonical
+runtime SHA-256 as a Nix SRI hash. It never fetches or builds the private
+canonical implementation.
+
+To re-qualify the published public `v0.1.0-alpha.2` assets and binary package, run:
+
+```sh
+scripts/verify-public-package.sh
+```
+
+That first re-verifies all five public release assets, then runs `nix flake
+check`, an explicit package build, and `nix run . -- --version`.
