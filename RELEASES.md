@@ -112,7 +112,7 @@ binary flake fetches only the community release URL and pins the canonical
 runtime SHA-256 as a Nix SRI hash. It never fetches or builds the private
 canonical implementation.
 
-After `v0.1.0-alpha.2` is publicly available, run:
+To re-qualify the published public `v0.1.0-alpha.2` assets and binary package, run:
 
 ```sh
 scripts/verify-public-package.sh

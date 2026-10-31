@@ -52,7 +52,9 @@ Public Testule specification and distribution material is published under Apache
 
 ## Binary package candidate
 
-The fixed-hash binary Nix package for `0.1.0-alpha.2` is prepared in #4 and
-intentionally remains unmerged until the immutable community release assets are
-live and `scripts/verify-public-package.sh` passes from the public URL without
-canonical-private credentials.
+The canonical `v0.1.0-alpha.2` public release artifacts are live and verified.
+The fixed-hash binary Nix package is prepared in #4 and intentionally remains
+unmerged until `scripts/verify-public-package.sh` passes against the exact PR
+head on the repository-scoped JIT runner without canonical-private credentials.
+The Dubnium repository policy must be activated on the actual runner host before
+that job can qualify the package.
